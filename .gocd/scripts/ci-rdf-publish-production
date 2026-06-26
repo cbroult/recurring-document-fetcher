@@ -1,0 +1,7 @@
+#!/bin/bash
+set -euo pipefail
+
+bundle install --path .bundle
+bundle exec gem build recurring-document-fetcher.gemspec
+GEM_HOST_API_KEY="${RUBYGEMS_API_KEY}" \
+  bundle exec gem push pkg/recurring-document-fetcher-*.gem

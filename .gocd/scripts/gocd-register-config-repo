@@ -1,0 +1,48 @@
+#!/bin/bash
+set -euo pipefail
+
+GOCD_URL="${GOCD_URL:-http://nexus.cbp-org.internal:8153}"
+ID="recurring-document-fetcher"
+
+echo "Checking if config-repo '$ID' already exists..."
+HTTP_CODE=$(curl -sf -o /dev/null -w '%{http_code}' \
+  "${GOCD_URL}/go/api/admin/config_repos/${ID}" \
+  -H 'Accept: application/vnd.go.cd.v4+json' 2>/dev/null || echo "000")
+
+if [ "$HTTP_CODE" = "200" ]; then
+  echo "OK: Config-repo '$ID' already registered."
+  exit 0
+fi
+
+echo "Registering config-repo '$ID'..."
+PAYLOAD=$(cat <<EOF
+{
+  "id": "${ID}",
+  "plugin_id": "yaml.config.plugin",
+  "material": {
+    "type": "git",
+    "attributes": {
+      "url": "https://github.com/cbroult/recurring-document-fetcher.git",
+      "branch": "main",
+      "auto_update": true
+    }
+  },
+  "rules": [
+    { "directive": "allow", "action": "refer", "type": "pipeline_group", "resource": "*" }
+  ]
+}
+EOF
+)
+
+HTTP_CODE=$(curl -sf -X POST "${GOCD_URL}/go/api/admin/config_repos" \
+  -H 'Accept: application/vnd.go.cd.v4+json' \
+  -H 'Content-Type: application/json' \
+  --data "${PAYLOAD}" \
+  -o /dev/null -w '%{http_code}' 2>/dev/null || echo "000")
+
+if [ "$HTTP_CODE" = "200" ]; then
+  echo "SUCCESS: Config-repo '$ID' registered."
+else
+  echo "ERROR: Config-repo registration returned HTTP ${HTTP_CODE}"
+  exit 1
+fi

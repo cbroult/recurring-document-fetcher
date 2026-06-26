@@ -1,0 +1,62 @@
+format_version: 10
+
+pipelines:
+  recurring-document-fetcher:
+    group: ClientDistribution
+    label_template: "${COUNT}"
+    lock_behavior: unlockWhenFinished
+    materials:
+      recurring-document-fetcher:
+        git: https://github.com/cbroult/recurring-document-fetcher.git
+        branch: main
+        auto_update: true
+        whitelist:
+          - main
+          - release/.*
+    stages:
+      - test:
+          fetch_materials: true
+          approval:
+            type: success
+          jobs:
+            run:
+              resources:
+                - linux
+                - ruby
+                - fast
+              tasks:
+                - exec:
+                    command: .gocd/scripts/ci-rdf-test
+
+      - publish-staging:
+          fetch_materials: true
+          approval:
+            type: success
+          jobs:
+            run:
+              resources:
+                - linux
+                - ruby
+                - fast
+              environment_variables:
+                GEM_USER: "{{SECRET:[vault][gem:username]}}"
+                GEM_PASSWORD: "{{SECRET:[vault][gem:password]}}"
+              tasks:
+                - exec:
+                    command: .gocd/scripts/ci-rdf-publish-staging
+
+      - publish-production:
+          fetch_materials: true
+          approval:
+            type: manual
+          jobs:
+            run:
+              resources:
+                - linux
+                - ruby
+                - fast
+              environment_variables:
+                RUBYGEMS_API_KEY: "{{SECRET:[vault][rubygems-api-key:token]}}"
+              tasks:
+                - exec:
+                    command: .gocd/scripts/ci-rdf-publish-production

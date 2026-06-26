@@ -1,0 +1,14 @@
+#!/bin/bash
+set -euo pipefail
+
+BRANCH=$(git rev-parse --abbrev-ref HEAD)
+if ! echo "$BRANCH" | grep -q '^release/'; then
+  echo "Not a release branch ($BRANCH) — skipping staging publish"
+  exit 0
+fi
+
+bundle install --path .bundle
+bundle exec gem build recurring-document-fetcher.gemspec
+bundle exec gem push pkg/recurring-document-fetcher-*.gem \
+  --host https://gems.cbp-org.internal \
+  -u "${GEM_USER}" -p "${GEM_PASSWORD}"
