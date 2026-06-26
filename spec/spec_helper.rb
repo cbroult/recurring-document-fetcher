@@ -1,8 +1,10 @@
 # frozen_string_literal: true
 
+require "tmpdir"
 require "recurring_document_fetcher"
 
 RSpec.configure do |config|
+  config.filter_run_excluding browser: true unless ENV["BROWSER_TESTS"]
   config.expect_with :rspec do |expectations|
     expectations.include_chain_clauses_in_custom_matcher_descriptions = true
   end

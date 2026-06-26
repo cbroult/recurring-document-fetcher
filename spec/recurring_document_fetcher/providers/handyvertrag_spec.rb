@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe RecurringDocumentFetcher::Providers::Handyvertrag do
+RSpec.describe RecurringDocumentFetcher::Providers::Handyvertrag, :browser do
   subject(:provider) do
     described_class.new(
       config: config,
@@ -146,8 +146,8 @@ RSpec.describe RecurringDocumentFetcher::Providers::Handyvertrag do
 
   describe "#disconnect" do
     it "quits the browser" do
-      # Access browser to create it
-      allow(browser).to receive(:quit)
+      provider.send(:browser)
+      expect(browser).to receive(:quit)
       provider.disconnect
     end
   end

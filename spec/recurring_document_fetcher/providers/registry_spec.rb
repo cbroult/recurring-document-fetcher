@@ -1,9 +1,12 @@
 # frozen_string_literal: true
 
 RSpec.describe RecurringDocumentFetcher::Providers::Registry do
-  before { described_class.clear }
-
-  after { described_class.clear }
+  around do |example|
+    saved = described_class.send(:registry).dup
+    described_class.clear
+    example.run
+    described_class.send(:registry).replace(saved)
+  end
 
   let(:dummy_class) { Class.new(RecurringDocumentFetcher::Providers::Base) }
 

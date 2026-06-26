@@ -105,7 +105,8 @@ module RecurringDocumentFetcher
 
       def find_links_in_element(element, link_text)
         element.evaluate(
-          "function(text) { return Array.from(this.querySelectorAll('a')).filter(a => a.textContent.trim() === text); }",
+          "function(text) { return Array.from(this.querySelectorAll('a'))" \
+          ".filter(a => a.textContent.trim() === text); }",
           link_text
         )
       rescue Ferrum::JavaScriptError
@@ -113,8 +114,7 @@ module RecurringDocumentFetcher
       end
 
       def build_document(doc_id, date, category, url, description)
-        ext = category == "invoice" ? "pdf" : "pdf"
-        filename = "#{date}_handyvertrag_#{doc_id}.#{ext}"
+        filename = "#{date}_handyvertrag_#{doc_id}.pdf"
         Document.new(
           id: doc_id, provider: "handyvertrag", date: Date.parse(date.to_s),
           category: category, filename: filename, url: url,
@@ -125,11 +125,11 @@ module RecurringDocumentFetcher
       def parse_german_date(text)
         # Matches patterns like "Januar 2026" or "15. Januar 2026"
         GERMAN_MONTHS.each do |month_name, month_num|
-          if text.include?(month_name)
-            year = text[/\d{4}/]
-            day = text[/(\d{1,2})\.\s*#{month_name}/, 1] || "1"
-            return Date.new(year.to_i, month_num, day.to_i)
-          end
+          next unless text.include?(month_name)
+
+          year = text[/\d{4}/]
+          day = text[/(\d{1,2})\.\s*#{month_name}/, 1] || "1"
+          return Date.new(year.to_i, month_num, day.to_i)
         end
         Date.today
       end

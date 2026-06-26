@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "ferrum"
-
 module RecurringDocumentFetcher
   module Providers
     class WebScrapingBase < Base
@@ -76,7 +74,11 @@ module RecurringDocumentFetcher
       end
 
       def self.default_browser_factory(headless: true)
+        require "ferrum"
         Ferrum::Browser.new(headless:, timeout: 30, window_size: [1280, 800])
+      rescue LoadError => e
+        raise LoadError,
+              "ferrum gem is required for browser-based providers. Add 'ferrum' to your Gemfile. (#{e.message})"
       end
       private_class_method :default_browser_factory
     end

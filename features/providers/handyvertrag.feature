@@ -3,6 +3,7 @@ Feature: Handyvertrag.de provider
   I want to fetch my invoices automatically
   So that I have them stored locally
 
+  @browser
   Scenario: Fetch with Handyvertrag provider configured but missing credentials
     Given a file named "config.yml" with:
       """
