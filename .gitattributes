@@ -1,0 +1,24 @@
+# Normalize all text files to LF (Unix) line endings
+* text=auto eol=lf
+
+# Specific patterns for safety
+*.rb      text eol=lf
+*.erb     text eol=lf
+*.yml     text eol=lf
+*.yaml    text eol=lf
+*.json    text eol=lf
+*.md      text eol=lf
+*.gemspec text eol=lf
+Gemfile   text eol=lf
+*.sh      text eol=lf
+*.bat     text eol=lf
+Rakefile  text eol=lf
+*.txt     text eol=lf
+
+# Binary files that git should never modify
+*.png     binary
+*.jpg     binary
+*.gif     binary
+*.ico     binary
+*.pdf     binary
+*.db      binary
