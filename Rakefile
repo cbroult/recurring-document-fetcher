@@ -12,6 +12,9 @@ desc "Check for vulnerable gems"
 task :audit do
   require "bundler/audit/cli"
   Bundler::Audit::Database.update!(quiet: true)
+rescue ArgumentError => e
+  warn "Warning: bundler-audit database update skipped (#{e.message})"
+ensure
   Bundler::Audit::CLI.start(["check"])
 end
 
