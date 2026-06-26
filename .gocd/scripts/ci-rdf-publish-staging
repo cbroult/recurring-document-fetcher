@@ -7,7 +7,8 @@ if ! echo "$BRANCH" | grep -q '^release/'; then
   exit 0
 fi
 
-bundle install --path .bundle
+bundle config set path '.bundle'
+bundle install
 bundle exec gem build recurring-document-fetcher.gemspec
 bundle exec gem push pkg/recurring-document-fetcher-*.gem \
   --host https://gems.cbp-org.internal \
