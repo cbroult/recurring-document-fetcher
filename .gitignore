@@ -4,3 +4,4 @@
 /tmp/
 *.gem
 .idea/
+node_modules/

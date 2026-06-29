@@ -1,0 +1,10 @@
+{
+  "name": "recurring-document-fetcher",
+  "private": true,
+  "scripts": {
+    "duplication": "jscpd ."
+  },
+  "devDependencies": {
+    "jscpd": "^4.0.5"
+  }
+}

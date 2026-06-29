@@ -22,12 +22,19 @@ module RecurringDocumentFetcher
 
       Registry.register("handyvertrag", self)
 
+      def self.config_fields
+        [
+          ConfigField.new(name: "username", label: "Mobile number", required: true, secret: false),
+          ConfigField.new(name: "password", label: "Password", required: true, secret: true)
+        ]
+      end
+
       def authenticate
-        credentials = credential_store.retrieve(provider_name)
+        secret = credential_store.retrieve(provider_name)
         navigate_to(URL_LOGIN)
 
-        fill_field(USERNAME_SELECTOR, credentials["username"])
-        fill_field(PASSWORD_SELECTOR, credentials["password"])
+        fill_field(USERNAME_SELECTOR, config.fetch("username"))
+        fill_field(PASSWORD_SELECTOR, secret.fetch("password"))
 
         page.at_css(PASSWORD_SELECTOR).focus
         page.keyboard.type(:Enter)

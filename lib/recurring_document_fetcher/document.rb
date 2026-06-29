@@ -4,10 +4,10 @@ module RecurringDocumentFetcher
   class Document
     CATEGORIES = %w[invoice statement call_log].freeze
 
-    attr_reader :id, :provider, :date, :category, :filename, :url, :metadata
+    attr_reader :id, :provider, :date, :category, :filename, :url, :metadata, :original_filename
 
     # rubocop:disable Naming/MethodParameterName, Metrics/ParameterLists
-    def initialize(id:, provider:, date:, category:, filename:, url:, metadata: {})
+    def initialize(id:, provider:, date:, category:, filename:, url:, metadata: {}, original_filename: nil)
       @id = id
       @provider = provider
       @date = date
@@ -15,6 +15,7 @@ module RecurringDocumentFetcher
       @filename = filename
       @url = url
       @metadata = metadata
+      @original_filename = original_filename
     end
     # rubocop:enable Naming/MethodParameterName, Metrics/ParameterLists
 

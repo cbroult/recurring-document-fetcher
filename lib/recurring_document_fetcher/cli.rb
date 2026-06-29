@@ -13,6 +13,27 @@ module RecurringDocumentFetcher
       say "recurring-document-fetcher #{RecurringDocumentFetcher::VERSION}"
     end
 
+    desc "configure [PROVIDER]",
+         "Configure a provider interactively.\n  Pass extra --key value pairs after -- for non-interactive mode."
+    option :list, type: :boolean, desc: "List available provider types and their fields"
+    option :force, aliases: "-f", type: :boolean, default: false,
+                   desc: "Overwrite existing provider configuration"
+    def configure(provider_name = nil, *extra_args)
+      cmd = Commands::Configure.new(
+        config_path: resolve_config_path,
+        credential_store: build_credential_store
+      )
+
+      if options[:list]
+        cmd.list
+      else
+        cli_options = parse_extra_args(extra_args)
+        cmd.call(provider_name, cli_options: cli_options, force: options[:force])
+      end
+    rescue RecurringDocumentFetcher::Error => e
+      abort_with(e.message)
+    end
+
     desc "fetch", "Fetch documents from configured providers"
     option :provider, aliases: "-p", type: :string, desc: "Fetch from a specific provider only"
     option :force, aliases: "-f", type: :boolean, default: false, desc: "Force re-download of all documents"
@@ -110,6 +131,15 @@ module RecurringDocumentFetcher
 
     def build_download_tracker
       DownloadTracker.new
+    end
+
+    def parse_extra_args(args)
+      hash = {}
+      args.each_slice(2) do |key, value|
+        clean_key = key.sub(/\A--/, "").tr("-", "_")
+        hash[clean_key] = value
+      end
+      hash
     end
   end
 end

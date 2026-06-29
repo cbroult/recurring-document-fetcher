@@ -76,9 +76,13 @@ module RecurringDocumentFetcher
       end
 
       def download_document(name, provider, doc)
-        year_dir = File.join(@configuration.provider_download_dir(name), doc.date.year.to_s)
-        FileUtils.mkdir_p(year_dir)
-        dest_path = File.join(year_dir, doc.filename)
+        root = @configuration.provider_download_dir(name)
+        ym = doc.date.strftime("%Y-%m")
+        month_dir = File.join(root, doc.date.year.to_s, ym)
+        FileUtils.mkdir_p(month_dir)
+        original = doc.original_filename || doc.filename
+        dest_filename = "#{ym}.#{name}.#{doc.id}.#{original}"
+        dest_path = File.join(month_dir, dest_filename)
         provider.download(doc, destination: dest_path)
         dest_path
       end
