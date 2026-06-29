@@ -60,6 +60,8 @@ RecurringDocumentFetcher (namespace module, VERSION, Error subclasses)
 
 ## Key Conventions
 
+- Use `should contain exactly:` with full DocString in feature files for file content assertions (documents expected YAML output); never use `should contain` / `should not contain` for file content
+- Use `should contain` / `should not contain` only for stdout/stderr output assertions
 - Double quotes for strings; `# frozen_string_literal: true` at top of every file
 - Named constants (`SCREAMING_SNAKE_CASE`) instead of magic literals
 - All exceptions translated to `RecurringDocumentFetcher::Error` subclasses
@@ -73,6 +75,27 @@ RecurringDocumentFetcher (namespace module, VERSION, Error subclasses)
 - Downloads: `~/Documents/invoices/<provider_name>/YYYY/`
 - File naming: `YYYY-MM-DD_<provider>_<document_id>.<ext>`
 - Database: `~/.config/recurring-document-fetcher/downloads.db`
+
+## Configuration Pattern
+
+Every provider class MUST declare its configuration schema via `self.config_fields`:
+
+```ruby
+def self.config_fields
+  [
+    ConfigField.new(name: "username", label: "Mobile number", required: true, secret: false),
+    ConfigField.new(name: "password", label: "Password", required: true, secret: true)
+  ]
+end
+```
+
+**Rules:**
+- `secret: true` fields are stored in `CredentialStore` (encrypted at rest), never in the YAML config
+- `secret: false` fields are stored in the YAML config file
+- All fields use `ConfigField` struct (in `config_field.rb`)
+- `type`, `required`, `secret`, and `cli_flag` have sensible defaults
+- The `configure` CLI command is the single entry point for setup (interactive or `--key value` flags)
+- Adding a new provider: implement `config_fields` + register via `Registry.register` + write Cucumber feature + RSpec spec
 
 ## Environment Notes
 

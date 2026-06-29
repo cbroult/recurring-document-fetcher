@@ -21,6 +21,16 @@ RSpec.describe RecurringDocumentFetcher::Document do
     expect(document.filename).to eq("2026-01-15_telekom_INV-2026-01.pdf")
     expect(document.url).to eq("https://example.com/invoice.pdf")
     expect(document.metadata).to eq(amount: "29.99")
+    expect(document.original_filename).to be_nil
+  end
+
+  it "accepts a custom original_filename" do
+    doc = described_class.new(
+      id: "INV-2026-01", provider: "telekom", date: Date.new(2026, 1, 15),
+      category: "invoice", filename: "synth.pdf", url: "https://example.com",
+      original_filename: "original_invoice.pdf"
+    )
+    expect(doc.original_filename).to eq("original_invoice.pdf")
   end
 
   it "is equal to another document with the same id and provider" do

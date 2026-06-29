@@ -1,0 +1,13 @@
+{
+  "threshold": 0,
+  "minLines": 2,
+  "minTokens": 16,
+  "pattern": "**/*.rb",
+  "ignore": [
+    "**/node_modules/**",
+    "**/vendor/**",
+    "**/.bundle/**"
+  ],
+  "gitignore": true,
+  "reporters": ["consoleFull"]
+}

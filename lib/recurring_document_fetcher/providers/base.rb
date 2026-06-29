@@ -5,6 +5,10 @@ module RecurringDocumentFetcher
     class Base
       DEFAULT_RATE_LIMIT_SECONDS = 2
 
+      def self.config_fields
+        []
+      end
+
       attr_reader :config, :credential_store
 
       def initialize(config:, credential_store:)

@@ -15,4 +15,5 @@ Before do
   prepend_environment_variable("PATH", "#{PROJECT_ROOT}/bin:")
   set_environment_variable("RUBYLIB", "#{PROJECT_ROOT}/lib")
   set_environment_variable("BUNDLE_GEMFILE", "#{PROJECT_ROOT}/Gemfile")
+  set_environment_variable("RECURRING_DOCUMENT_FETCHER_PASSPHRASE", "test-passphrase")
 end

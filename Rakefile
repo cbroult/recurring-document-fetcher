@@ -18,8 +18,17 @@ ensure
   Bundler::Audit::CLI.start(["check"])
 end
 
+desc "Check for code duplication with jscpd"
+task :duplication do
+  unless system("pnpm --version", out: File::NULL, err: File::NULL)
+    warn "pnpm not available, skipping duplication check"
+    next
+  end
+  sh "pnpm install --frozen-lockfile 2>/dev/null && pnpm run duplication"
+end
+
 desc "Run all static analysis"
-task lint: %i[rubocop audit]
+task lint: %i[rubocop audit duplication]
 
 desc "Run all verification (spec, features, lint)"
 task verify: %i[spec features lint]

@@ -3,4 +3,5 @@ set -euo pipefail
 
 bundle config set path '.bundle'
 bundle install
+pnpm install --frozen-lockfile || true
 bundle exec rake verify
